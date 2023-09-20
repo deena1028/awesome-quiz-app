@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Awesome Quiz</title>
+
+{% include 'header.html' %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+</head>
+  <body>
+    <div class="container">
+      <div id="home" class="flex-center flex-column">
+       
+        <div class="content-body">
+          <div class="form-wrapper">
+            <form  class="bg-white" action="/login_user" method="POST">
+              {% csrf_token %}
+              <!-- <div class="bg-grey">
+             
+              </div> -->
+              <h1 class="text-title">Login </h1>
+              <p class="text-title"> </p>
+              <div class="field-group">
+                <label class="label" for="txt-email">Email </label>
+                <input class="input" type="email" id="txt-email"  name="userid" placeholder="johndoe@gmail.com" />
+              </div>
+              <div class="field-group">
+                <label class="label" for="txt-password">Password</label>
+                <input class="input" type="password" id="txt-password" name="paswod" placeholder="Enter password" />
+              </div>
+              <div class="field-group">
+                <input class="btn-submit" type="submit" value="Log In" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

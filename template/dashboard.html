@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Quizzify - Play</title>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/game.css' %}" />
+    <link rel="icon" type="image/jpg" href="% static 'image/play.jpg' %}">
+  </head>
+  <script async src="{% static 'js/adsbygoogle.js' %}"
+  crossorigin="anonymous"></script>
+  <body>
+    <div class="container">
+      
+      <div  class="justify-center flex-column ">
+        
+        <h2 id="question">Select Course</h2>
+        {% for i in cData %}
+        <div class="choice-container">
+         
+          <a class="choice-text" style="text-decoration: none;" href="quizz/{{i.id}}">{{ i.courseName }}</a>
+        </div>
+        {% endfor %}
+       
+      </div>
+    </div>
+    <!-- <script src="{% static 'js/game.js' %}"></script> -->
+  </body>
+</html>
