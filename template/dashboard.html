@@ -9,13 +9,18 @@
     <link rel="stylesheet" href="{% static 'css/app.css' %}" />
     <link rel="stylesheet" href="{% static 'css/game.css' %}" />
     <link rel="icon" type="image/jpg" href="% static 'image/play.jpg' %}">
+    
   </head>
   <script async src="{% static 'js/adsbygoogle.js' %}"
   crossorigin="anonymous"></script>
   <body>
+    
     <div class="container">
       
-      <div  class="justify-center flex-column ">
+      
+      
+      <div class="row"><div  class="justify-center flex-column ">
+        
         
         <h2 id="question">Select Course</h2>
         {% for i in cData %}
@@ -25,7 +30,8 @@
         </div>
         {% endfor %}
        
-      </div>
+      </div></div>
+      
     </div>
     <!-- <script src="{% static 'js/game.js' %}"></script> -->
   </body>

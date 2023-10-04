@@ -1,58 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    {% load static %}
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Quizzify - Play</title>
-    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/game.css' %}" />
-    <link rel="icon" type="image/jpg" href="% static 'image/play.jpg' %}">
-  </head>
-  <script async src="{% static 'js/adsbygoogle.js' %}"
-  crossorigin="anonymous"></script>
-  <body>
-    <div class="container">
-      <div id="loader"></div>
-      <div id="game" class="justify-center flex-column hidden">
-        <div id="hud">
-          <div id="hud-item">
-            <p id="progressText" class="hud-prefix">
-              Question
-            </p>
-            <div id="progressBar">
-              <div id="progressBarFull"></div>
-            </div>
+
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Quizzify - Play</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/game.css' %}" />
+  <link rel="icon" type="image/jpg" href="% static 'image/play.jpg' %}">
+  <style>
+    .btn {
+      text-decoration: none;
+      display: inline-block;
+      padding: 8px 16px;
+    }
+
+    .btn:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    .previous {
+      background-color: #f1f1f1;
+      color: black;
+    }
+
+    .next {
+      background-color: #04AA6D;
+      color: white;
+    }
+
+    .round {
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<script async src="{% static 'js/adsbygoogle.js' %}" crossorigin="anonymous"></script>
+
+<body>
+  <div class="container">
+    <!-- <div id="loader"></div> -->
+    <div id="game" class="justify-center flex-column ">
+      <div id="hud">
+        <div id="hud-item">
+          <p id="progressText" class="hud-prefix">
+            Question
+          </p>
+          <div id="progressBar">
+            <div id="progressBarFull"></div>
           </div>
-          <div id="hud-item">
-            <p class="hud-prefix">
-              Score
-            </p>
-            <h1 class="hud-main-text" id="score">
-              0
-            </h1>
-          </div>
         </div>
-        <h2 id="question"></h2>
-        <div class="choice-container">
-          <p class="choice-prefix">A</p>
-          <p class="choice-text" data-number="1"></p>
-        </div>
-        <div class="choice-container">
-          <p class="choice-prefix">B</p>
-          <p class="choice-text" data-number="2"></p>
-        </div>
-        <div class="choice-container">
-          <p class="choice-prefix">C</p>
-          <p class="choice-text" data-number="3"></p>
-        </div>
-        <div class="choice-container">
-          <p class="choice-prefix">D</p>
-          <p class="choice-text" data-number="4"></p>
+        <div id="hud-item">
+          <p class="hud-prefix">
+            Time left
+          </p>
+          <h1 class="hud-main-text" id="score">
+
+            <p id="demo"></p>
+          </h1>
         </div>
       </div>
+
+
+      <h2 id="question"></h2>
+      <div class="choice-container">
+        <p class="choice-prefix">A</p>
+        <p class="choice-text" id="op1" data-number="A"></p>
+
+      </div>
+      <div class="choice-container">
+        <p class="choice-prefix">B</p>
+        <p class="choice-text" id="op2" data-number="B"></p>
+
+      </div>
+      <div class="choice-container">
+        <p class="choice-prefix">C</p>
+        <p class="choice-text" id="op3" data-number="C"></p>
+      </div>
+      <div class="choice-container">
+        <p class="choice-prefix">D</p>
+        <p class="choice-text" id="op4" data-number="D"></p>
+      </div>
+
+      <input type="hidden" name="userAns" id="userAns">
+
+
+      <input type="hidden" name="qid" id="qid" value="">
+      <input type="hidden" name="cQue" id="cQue" value="">
+      <input type="hidden" name="tQue" id="tQue" value="">
+
+      <div class="row">
+
+        <!-- <button name="previous" id="previous" class="btn btn-success">Previous</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+
+
+        <button name="next" id="next" class="btn btn-success">Next</button>
+      </div>
+
+
     </div>
-    <script src="{% static 'js/game.js'"></script>
-  </body>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+  <script>
+    //question display function
+    function displayQuiz(currentque, quiz) {
+      var quiz = JSON.parse("{{question|escapejs}}");
+      console.log(quiz)
+      var totalque = Object.keys(quiz['js']).length;
+      document.getElementById("tQue").value = totalque
+      totalque = document.getElementById("tQue").value
+      var questionCounter = currentque + 1
+
+      if (currentque < totalque) {
+        $("#tque").html(totalque);
+        $("#previous").attr("disabled", false);
+        $("#next").attr("disabled", false);
+        $("#qid").html(quiz['js'][currentque].id + '.');
+        $("#question").html(quiz['js'][currentque].question);
+        $("#question-options").html("");
+        console.log(quiz['js'][currentque].A)
+        $("#op1").html(quiz['js'][currentque].A);
+
+        $("#op2").html(quiz['js'][currentque].B);
+        $("#op3").html(quiz['js'][currentque].C);
+        $("#op4").html(quiz['js'][currentque].D);
+        document.getElementById("qid").value = quiz['js'][currentque].id
+      }
+
+      if (currentque <= 0) {
+        $("#previous").attr("disabled", true);
+      }
+      if (currentque >= totalque) {
+        $('#next').attr('disabled', true);
+
+      }
+      $('#next').attr('disabled', true);
+      document.getElementById("op1").style.backgroundColor = 'white'
+      document.getElementById("op2").style.backgroundColor = 'white'
+      document.getElementById("op3").style.backgroundColor = 'white'
+      document.getElementById("op4").style.backgroundColor = 'white'
+      progressText.innerText = `Question ${questionCounter}/${totalque}`;
+      progressBarFull.style.width = `${(questionCounter / totalque) * 100}%`;
+    }
+
+
+
+    var selectedopt;
+    $(document).ready(function () {
+
+      var currentque = 0;
+      userAnsData=0;
+      document.getElementById("cQue").value = currentque
+
+      displayQuiz(0);
+      var t="{{time}}"
+      tsplit=t.split(":");
+      countmin=parseInt(tsplit[0])*60+parseInt(tsplit[1])
+      countdown( "demo", countmin, 0 );
+      
+
+    });
+    //next question display function
+    $('#next').click(function (e) {
+    var quiz = JSON.parse("{{question|escapejs}}");
+    cque = document.getElementById("cQue").value
+    tque = document.getElementById("tQue").value
+   
+      
+    userans=document.getElementById("userAns").value
+    qid=quiz['js'][cque].id
+    cAns=quiz['js'][cque].ans
+    if(userAnsData){
+      var myObj = { 'qid': qid, 'userAns': userans,'ans':cAns }
+      
+      userAnsData.push(myObj)
+      console.log(userAnsData)
+    }else{
+      userAnsData= [{ 'qid': qid, 'userAns': userans,'ans':cAns }]
+    }
+    cque = document.getElementById("cQue").value
+    tque = document.getElementById("tQue").value
+    cque = parseInt(cque) + 1
+    document.getElementById("cQue").value = cque
+    displayQuiz(cque)
+    if (cque>(tque-1)){
+     
+        $.ajax({
+        url: '/update_user_answer',
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify({userAnsData}),
+        headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+        },
+        success: (data) => {
+          
+         window.location.href='/result/'+data.id
+      },
+       error: (error) => {
+        console.log(error);
+      }
+
+     });
+
+       }
+    });
+    //previous question display function
+    var updateps = document.getElementsByClassName('choice-text')
+    for (i = 0; i < updateps.length; i++) {
+
+      updateps[i].addEventListener('click', function () {
+
+        document.getElementById("userAns").value = this.dataset.number
+        document.getElementById("op1").style.backgroundColor = 'white'
+        document.getElementById("op2").style.backgroundColor = 'white'
+        document.getElementById("op3").style.backgroundColor = 'white'
+        document.getElementById("op4").style.backgroundColor = 'white'
+        this.style.backgroundColor = 'lightgrey';
+        $('#next').attr('disabled', false);
+
+
+      })
+    }
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + "=")) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    //this.setTime(this.getTime() + (h*60*60*1000));
+    function countdown( elementName, minutes, seconds )
+    {
+        var element, endTime, hours, mins, msLeft, time;
+        function twoDigits( n )
+        {
+            return (n <= 9 ? "0" + n : n);
+        }
+        function updateTimer()
+        {
+            msLeft = endTime - (+new Date);
+            if ( msLeft < 1000 ) {
+              window.location.href = "/home";
+            } else {
+                time = new Date( msLeft );
+                hours = time.getUTCHours();
+                mins = time.getUTCMinutes();
+                element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+                setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+            }
+        }
+        element = document.getElementById( elementName );
+        endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
+        updateTimer();
+    }
+  </script>
+
+  <!-- <script src="{% static 'js/game.js'"></script> -->
+</body>
+
 </html>

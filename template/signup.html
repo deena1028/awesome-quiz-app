@@ -18,13 +18,17 @@
        
         <div class="content-body">
           <div class="form-wrapper">
-            <form  class="bg-white" action="/login_user" method="POST">
+            <form  class="bg-white" action="/signup_user" method="POST">
               {% csrf_token %}
               <!-- <div class="bg-grey">
              
               </div> -->
-              <h1 class="text-title">Login </h1>
+              <h1 class="text-title">Sign Up </h1>
               <p class="text-title"> </p>
+              <div class="field-group">
+                <label class="label" for="txt-email">Name </label>
+                <input class="input" type="text" id="txt-name"  name="username" placeholder="johndoe" />
+              </div>
               <div class="field-group">
                 <label class="label" for="txt-email">Email </label>
                 <input class="input" type="email" id="txt-email"  name="userid" placeholder="johndoe@gmail.com" />
@@ -34,10 +38,10 @@
                 <input class="input" type="password" id="txt-password" name="paswod" placeholder="Enter password" />
               </div>
               <div class="field-group">
-                <input class="btn-submit" type="submit" value="Log In" />
+                <input class="btn-submit" type="submit" value="Sign Up" />
               </div>
               <div class="field-group">
-                <a href="/signup">Sign up</a>
+                already registered <a href="/login"> Login</a>
               </div>
             </form>
           </div>
