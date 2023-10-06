@@ -6,19 +6,37 @@ from json import dumps
 import ast
 # Create your views here.
 def index(request):
-   return render(request,'index.html')
+   data={'message':''}
+   return render(request,'index.html',data)
 def login_user(request):
       if(request.method=="POST"):
              userid=request.POST.get('userid')
              paswod=request.POST.get('paswod')
-             check_user =user_login.objects.filter(userid=userid,paswod=paswod)
-             if check_user:
-                   request.session['user'] = userid
-                   return redirect('/home')
+             data={'message':'Fill all the fields'}
+             if userid=='':  
+                  return render(request,'index.html',data)
+             elif paswod=='':
+                    return render(request,'index.html',data)
+             else:
+                  check_user =user_login.objects.filter(userid=userid,paswod=paswod)
+                  if check_user:
+                        request.session['user'] = userid
+                        return redirect('/home')
+                  
+                  else:
+                         data={'message':'Invalid username or password'}
+                         return render(request,'index.html',data)
+                        
 def home(request):
-      courseData=courses.objects.all()
-      cData={'cData':courseData}
-      return render(request,'dashboard.html',cData)
+      courseData=courses.objects.filter(status=1)
+      data=dict()
+      for i in courseData:
+            examData=courseQuizz.objects.get(status=1,courseId=i)
+
+            data[i.courseName]=[examData.quizname,examData.no_of_quest,examData.quizDuration]
+      print(data)      
+      dts={'data':data}
+      return render(request,'dashboard.html',dts)
 def quizz(request,id):
       
        
@@ -60,14 +78,20 @@ def result(request,id):
       userAns=userAnswer.objects.get(id=id)
       data=userAns.userAns
       cans=0
+      userData=[]
       dict_obj = ast.literal_eval(data)
+      index=0
       for i in dict_obj:
+            index+=1
             a=i['userAns'].lower()
             b=i['ans'].lower()
             if a==b :
                   cans+=1
-      quzid=courseQuizz.objects.get(id=userAns.quizId.id)    
-      data={'usermark':cans,'total':quzid.no_of_quest}         
+            quest=questions.objects.get(id=i['qid'])
+            userData.append({'index':index,'question':quest.question,'A':quest.optA,'B':quest.optB,'C':quest.optC,'D':quest.optD,'ans':b,'userAns':a})
+            
+      
+      data={'userdata':userData,'mark':cans,'total':index}         
       return render(request,'end.html',data)
 def signup(request):
       return render(request,'signup.html')
@@ -81,5 +105,10 @@ def signup_user(request):
              query.save()
              request.session['user'] = userid
              return redirect('/home')      
+def logout(request):
+      del request.session['user']
+      return redirect('/') 
+
+
       
    

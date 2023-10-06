@@ -33,7 +33,9 @@ html {
   position: relative;
   background-size: 1100px;
 }
-
+.alert-danger{
+  color:red
+}
 @media screen and (max-width: 640px) {
   .content-body {
     background-position-y: top;
@@ -145,4 +147,7 @@ html {
 .link-about > a {
   color: #4d5068;
   text-decoration: underline;
+}
+.alert-danger{
+  color:red
 }

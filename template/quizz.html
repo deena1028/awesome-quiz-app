@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="{% static 'css/app.css' %}" />
   <link rel="stylesheet" href="{% static 'css/game.css' %}" />
   <link rel="icon" type="image/jpg" href="% static 'image/play.jpg' %}">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}" />
   <style>
     .btn {
       text-decoration: none;
@@ -40,6 +41,7 @@
 <script async src="{% static 'js/adsbygoogle.js' %}" crossorigin="anonymous"></script>
 
 <body>
+  {% include "header.html" %}
   <div class="container">
     <!-- <div id="loader"></div> -->
     <div id="game" class="justify-center flex-column ">
@@ -90,6 +92,7 @@
       <input type="hidden" name="qid" id="qid" value="">
       <input type="hidden" name="cQue" id="cQue" value="">
       <input type="hidden" name="tQue" id="tQue" value="">
+      <input type="hidden" name="useransObj" id="useransObj" value="">
 
       <div class="row">
 
@@ -109,7 +112,6 @@
     //question display function
     function displayQuiz(currentque, quiz) {
       var quiz = JSON.parse("{{question|escapejs}}");
-      console.log(quiz)
       var totalque = Object.keys(quiz['js']).length;
       document.getElementById("tQue").value = totalque
       totalque = document.getElementById("tQue").value
@@ -143,8 +145,11 @@
       document.getElementById("op2").style.backgroundColor = 'white'
       document.getElementById("op3").style.backgroundColor = 'white'
       document.getElementById("op4").style.backgroundColor = 'white'
-      progressText.innerText = `Question ${questionCounter}/${totalque}`;
+     
+      if(questionCounter<=totalque){
+        progressText.innerText = `Question ${questionCounter}/${totalque}`;
       progressBarFull.style.width = `${(questionCounter / totalque) * 100}%`;
+      }
     }
 
 
@@ -178,7 +183,6 @@
       var myObj = { 'qid': qid, 'userAns': userans,'ans':cAns }
       
       userAnsData.push(myObj)
-      console.log(userAnsData)
     }else{
       userAnsData= [{ 'qid': qid, 'userAns': userans,'ans':cAns }]
     }
@@ -254,7 +258,26 @@
         {
             msLeft = endTime - (+new Date);
             if ( msLeft < 1000 ) {
-              window.location.href = "/home";
+              userAnsData1=document.getElementById("useransObj").value
+              console.log(userAnsData1)
+              $.ajax({
+                url: '/update_user_answer',
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({userAnsData1}),
+                headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                },
+                success: (data) => {
+                  
+                 window.location.href='/result/'+data.id
+              },
+               error: (error) => {
+                console.log(error);
+              }
+        
+             });
             } else {
                 time = new Date( msLeft );
                 hours = time.getUTCHours();

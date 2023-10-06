@@ -1,35 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    {% load static %}
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Congratulations!</title>
-    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
-    <link rel="icon" type="image/jpg" href="{% static 'image/Congo.jpg' %}">
-  </head>
-  <script async src="{% static 'js/adsbygoogle.js' %}" crossorigin="anonymous"></script>
 
-  <body>
-    <div class="container">
-      <div id="end" class="flex-center flex-column">
-        <h1 id="finalScore">{{usermark}} out of {{total}} </h1>
-        
-        <a class="btn" href="/home">Take Test Again</a>
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Quizzify - Play</title>
+  <link rel="stylesheet" href="{% static 'css/game.css' %}" />
+  <link rel="icon" type="image/jpg" href="% static 'image/play.jpg' %}">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+<style>
+p{
+    margin: 0px !important;
+  }
+</style>
+</head>
+
+<body>
+  {% include "header.html" %}
+
+  <main>
+    <!--------Banner--------->
+    <section>
+      
+      <div class="container-md-sm">
+        <!-- <div  class="flex-center flex-column">
+          <h1 >your score </h1>
+          <h1 >{{mark}} out of {{total}} </h1>
+          
+          <a class="btn" href="/home">Take Test Again</a>
+        </div> -->
+ 
+       
+{% for i in userdata %}
+<div class="row-md-12">
+  <div class="col-md-6">
+      <h5 id="question">{{i.index}}. {{i.question}}</h5>
+      <div class="choice-container">
+        <p class="choice-prefix">A</p>
+        <p class="choice-text" id="op1{{i.index}}" data-number="a" >{{i.A}}</p>
+
+      </div>
+      <div class="choice-container">
+        <p class="choice-prefix">B</p>
+        <p class="choice-text" id="op2{{i.index}}" data-number="b">{{i.B}}</p>
+
+      </div>
+      <div class="choice-container">
+        <p class="choice-prefix">C</p>
+        <p class="choice-text" id="op3{{i.index}}" data-number="c">{{i.C}}</p>
+      </div>
+      <div class="choice-container">
+        <p class="choice-prefix">D</p>
+        <p class="choice-text" id="op4{{i.index}}" data-number="d">{{i.D}}</p>
+      </div>
       </div>
     </div>
-    <!-- <script src="{% static 'js/end.js' %}"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <input type="hidden" class="user-ans" id="userans{{i.index}}" value="{{i.userAns}}">
+    <input type="hidden" class="ans" id="ans{{i.index}}" value="{{i.ans}}">
 
-    <script>
-    $(document).ready(function () {
+{% endfor %}
+
+   
+  </div>
+  </section>
+  </main>
+  <script>
+  var updateps = document.getElementsByClassName('user-ans')
+    for (i = 1; i <= updateps.length; i++) {
+
+
+        var userans=document.getElementById("userans"+i).value
+        var ans=document.getElementById("ans"+i).value
+
+        
+          if (userans=='a'){
+            document.getElementById("op1"+i).style.backgroundColor = 'green'
+
+          }
+          if (userans=='b'){
+            document.getElementById("op2"+i).style.backgroundColor = 'green'
+
+          }
+          if (userans=='c'){
+            document.getElementById("op3"+i).style.backgroundColor = 'green'
+
+          }
+          if (userans=='d'){
+            document.getElementById("op4"+i).style.backgroundColor = 'green'
+
+          }
+        
+          if (userans=='a'){
+            document.getElementById("op1"+i).style.backgroundColor = 'red'
+
+          }
+          if (userans=='b'){
+            document.getElementById("op2"+i).style.backgroundColor = 'red'
+
+          }
+          if (userans=='c'){
+            document.getElementById("op3"+i).style.backgroundColor = 'red'
+
+          }
+          if (userans=='d'){
+            document.getElementById("op4"+i).style.backgroundColor = 'red'
+
+          }
+          if (ans=='a'){
+            document.getElementById("op1"+i).style.backgroundColor = 'green'
+
+          }
+          if (ans=='b'){
+            document.getElementById("op2"+i).style.backgroundColor = 'green'
+
+          }
+          if (ans=='c'){
+            document.getElementById("op3"+i).style.backgroundColor = 'green'
+
+          }
+          if (ans=='d'){
+            document.getElementById("op4"+i).style.backgroundColor = 'green'
+
+          }
+        }
+
 
       
-
-      
-
-    });
+    
   </script>
-  </body>
+</body>
+
 </html>

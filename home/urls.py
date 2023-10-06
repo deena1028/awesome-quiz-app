@@ -12,6 +12,7 @@ urlpatterns = [
     path('update_user_answer',views.update_user_answer),
     path('result/<id>',views.result),
     path('signup',views.signup),
-    path('signup_user',views.signup_user)
+    path('signup_user',views.signup_user),
+    path('logout',views.logout)
     
 ]

@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Awesome Quiz</title>
 
-{% include 'header.html' %}
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'css/style.css' %}" />
@@ -17,12 +16,13 @@
       <div id="home" class="flex-center flex-column">
        
         <div class="content-body">
+         
           <div class="form-wrapper">
+         
             <form  class="bg-white" action="/login_user" method="POST">
-              {% csrf_token %}
-              <!-- <div class="bg-grey">
              
-              </div> -->
+              {% csrf_token %}
+             
               <h1 class="text-title">Login </h1>
               <p class="text-title"> </p>
               <div class="field-group">
@@ -38,6 +38,9 @@
               </div>
               <div class="field-group">
                 <a href="/signup">Sign up</a>
+              </div>
+              <div class="alert-danger" role="alert">
+                {{message}}
               </div>
             </form>
           </div>
