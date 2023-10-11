@@ -6,6 +6,7 @@ class  user_login(models.Model):
     username=models.TextField(max_length=200)
     userid=models.TextField(max_length=200)
     paswod=models.TextField(max_length=200)
+    user_type=models.IntegerField(null=True)
 class courses(models.Model):
     courseName=models.TextField(max_length=200)
     status=models.IntegerField(null=True)

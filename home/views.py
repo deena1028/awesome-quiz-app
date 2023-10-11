@@ -18,10 +18,19 @@ def login_user(request):
              elif paswod=='':
                     return render(request,'index.html',data)
              else:
-                  check_user =user_login.objects.filter(userid=userid,paswod=paswod)
+                  check_user =user_login.objects.get(userid=userid,paswod=paswod)
+                  
                   if check_user:
-                        request.session['user'] = userid
-                        return redirect('/home')
+                        if check_user.user_type == 2:
+                              request.session['user'] = userid
+                              request.session['user_type'] = check_user.user_type
+                              return redirect('/home')
+                        else:
+                               request.session['user'] = userid
+                               request.session['user_type'] = check_user.user_type
+                               data={'message':'admin login'}
+                               return redirect('/admin_dashboard')
+                              
                   
                   else:
                          data={'message':'Invalid username or password'}
@@ -29,18 +38,13 @@ def login_user(request):
                         
 def home(request):
       courseData=courses.objects.filter(status=1)
-      data=dict()
-      for i in courseData:
-            examData=courseQuizz.objects.get(status=1,courseId=i)
-
-            data[i.courseName]=[examData.quizname,examData.no_of_quest,examData.quizDuration]
-      print(data)      
-      dts={'data':data}
+      examData=courseQuizz.objects.filter(status=1)
+      dts={'data':courseData,'exam':examData}
       return render(request,'dashboard.html',dts)
 def quizz(request,id):
       
        
-            dts=questions.objects.filter(courseId=id).order_by("?")
+            dts=questions.objects.filter(quizId=id).order_by("?")
             js=[]
             for i in dts:
                   js.append({'id':i.id,'question':i.question,'A':i.optA,'B':i.optB,'C':i.optC,'D':i.optD,'ans':i.correctOpt})
@@ -101,14 +105,19 @@ def signup_user(request):
              uname=request.POST.get('username')
              userid=request.POST.get('userid')
              paswod=request.POST.get('paswod')
-             query=user_login(username=uname,userid=userid,paswod=paswod)
+             query=user_login(username=uname,userid=userid,paswod=paswod,user_type=2)
              query.save()
              request.session['user'] = userid
+             request.session['user_type'] = 2
              return redirect('/home')      
 def logout(request):
       del request.session['user']
       return redirect('/') 
 
+def admin_dashboard(request):
+      userAns=userAnswer.objects.all()
+      dts={'data':userAns}
+      return render(request,'admin_dashboard.html',dts)    
 
       
    
