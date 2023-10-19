@@ -10,7 +10,11 @@
     <title>Awesome Quizz</title>
     <link rel="stylesheet" href="{% static 'css/header.css' %}" />
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
-  
+    <style>
+      body{
+        background-color: #ecf5ff !important;
+      }
+     </style>
   </head>
   <body >
    
@@ -30,9 +34,14 @@
           <div class="container-xl">
             <div class="row g-2 align-items-center">
               <div class="col">
+                <div class="card">
+                  <div class="card-body">
                 <h2 class="page-title">
-                  Alerts
+                  Result
                 </h2>
+                <h5 class="card-title">You have scroed {{mark}} out of {{total}}</h5>
+                </div>
+                </div>
               </div>
             </div>
           </div>
@@ -42,21 +51,21 @@
           <div class="container-xl">
             <div class="row row-cards">
                 {% for i in userdata %}
-              <div class="col-lg-6">
+              <div class="col-lg-6 mt-2 mb-2">
                 <div class="card">
                   <div class="card-body">
                     <!-- <h2 class="card-title">Basic alerts</h2> -->
                     <p class="text-secondary">{{i.index}}. {{i.question}}</p>
-                    <div class="alert  alert-info" role="alert">
+                    <div class="alert " role="alert" id="op1{{i.index}}">
                     A. {{i.A}}
                     </div>
-                    <div class="alert alert-info" role="alert">
+                    <div class="alert " role="alert" id="op2{{i.index}}">
                         B.{{i.B}}
                     </div>
-                    <div class="alert  alert-info" role="alert">
+                    <div class="alert  " role="alert" id="op3{{i.index}}">
                         C. {{i.C}}
                     </div>
-                    <div class="alert alert-info" role="alert">
+                    <div class="alert  role="alert" id="op4{{i.index}}">
                         D. {{i.D}}
                     </div>
                   </div>
@@ -68,10 +77,12 @@
              
             </div>
           </div>
+        
         </div>
       
       </div>
     </div>
+    
     <script>
         var updateps = document.getElementsByClassName('user-ans')
           for (i = 1; i <= updateps.length; i++) {
@@ -86,15 +97,15 @@
       
                 }
                 if (userans=='b'){
-                  document.getElementById("op2"+i).style.backgroundColor = 'green'
+                  document.getElementById("op2"+i).classList.add("alert-success")
       
                 }
                 if (userans=='c'){
-                  document.getElementById("op3"+i).style.backgroundColor = 'green'
+                  document.getElementById("op3"+i).classList.add("alert-success")
       
                 }
                 if (userans=='d'){
-                  document.getElementById("op4"+i).style.backgroundColor = 'green'
+                  document.getElementById("op4"+i).classList.add("alert-success")
       
                 }
               
@@ -115,19 +126,23 @@
       
                 }
                 if (ans=='a'){
-                  document.getElementById("op1"+i).classList.add("alert-danger")
+                  document.getElementById("op1"+i).classList.remove("alert-danger")
+                  document.getElementById("op1"+i).classList.add("alert-success")
       
                 }
                 if (ans=='b'){
-                  document.getElementById("op2"+i).style.backgroundColor = 'green'
+                  document.getElementById("op2"+i).classList.remove("alert-danger")
+                  document.getElementById("op2"+i).classList.add("alert-success")
       
                 }
                 if (ans=='c'){
-                  document.getElementById("op3"+i).classList.add("alert-danger")
+                  document.getElementById("op3"+i).classList.remove("alert-danger")
+                  document.getElementById("op3"+i).classList.add("alert-success")
       
                 }
                 if (ans=='d'){
-                  document.getElementById("op4"+i).classList.add("alert-danger")
+                  document.getElementById("op4"+i).classList.remove("alert-danger")
+                  document.getElementById("op4"+i).classList.add("alert-success")
       
                 }
               }
@@ -136,5 +151,6 @@
             
           
         </script>
+       
   </body>
 </html>

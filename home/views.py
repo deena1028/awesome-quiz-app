@@ -4,6 +4,8 @@ from .models import user_login,courses,questions,courseQuizz,userAnswer
 import json
 from json import dumps
 import ast
+from django.contrib.auth import authenticate
+
 # Create your views here.
 def index(request):
    data={'message':''}
@@ -18,9 +20,10 @@ def login_user(request):
              elif paswod=='':
                     return render(request,'index.html',data)
              else:
-                  check_user =user_login.objects.get(userid=userid,paswod=paswod)
+                 
                   
-                  if check_user:
+                  if user_login.objects.filter(userid=userid,paswod=paswod).exists():
+                        check_user =user_login.objects.get(userid=userid,paswod=paswod)
                         if check_user.user_type == 2:
                               request.session['user'] = userid
                               request.session['user_type'] = check_user.user_type
@@ -37,24 +40,40 @@ def login_user(request):
                          return render(request,'index.html',data)
                         
 def home(request):
-      courseData=courses.objects.filter(status=1)
-      examData=courseQuizz.objects.filter(status=1)
-      dts={'data':courseData,'exam':examData}
-      return render(request,'dashboard.html',dts)
+      if 'user' not in request.session:
+             return redirect('/') 
+      else:
+            if request.session['user_type']==2:
+                  courseData=courses.objects.filter(status=1)
+                  examData=courseQuizz.objects.filter(status=1)
+                  dts={'data':courseData,'exam':examData}
+                  return render(request,'dashboard.html',dts)
+            else:
+                  return redirect('/admin_dashboard')
 def quizz(request,id):
       
-       
-            dts=questions.objects.filter(quizId=id).order_by("?")
-            js=[]
-            for i in dts:
-                  js.append({'id':i.id,'question':i.question,'A':i.optA,'B':i.optB,'C':i.optC,'D':i.optD,'ans':i.correctOpt})
-                  qduration=i.quizId.quizDuration
-            quizz={'js':js}
-            dataJSON = dumps(quizz) 
+            if 'user' not in request.session:
+                  return redirect('/')  
+                  
+            else:
+                  if request.session['user_type']==2:
+                        dts=questions.objects.filter(quizId=id).order_by("?")
+                        js=[]
+                        for i in dts:
+                              js.append({'id':i.id,'question':i.question,'A':i.optA,'B':i.optB,'C':i.optC,'D':i.optD})
+                              qduration=i.quizId.quizDuration
+                        quizz={'js':js}
+                        dataJSON = dumps(quizz) 
+                        
+                        
+                        Data={'question':dataJSON,'questids':'1' ,'count':int(0),'time':qduration}
+                        return render(request,'quizz.html',Data)
+                  else:
+                        return redirect('/admin_dashboard')
+            # dts=questions.objects.filter(quizId=id).order_by("?")
+            # data={'data':dts}
+            # return render(request,'quizz.html',data)
             
-            
-            qData={'question':dataJSON,'questids':'1' ,'count':int(0),'time':qduration}
-            return render(request,'quizz.html',qData)
 def update_user_answer(request):
       is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
       if is_ajax:
@@ -74,9 +93,7 @@ def update_user_answer(request):
                   query.save()
                   ids=userAnswer.objects.last().id
                   return JsonResponse({'id':ids})
-                  
-                  
-
+            
 def result(request,id):
       users=user_login.objects.get(userid=request.session['user'])
       userAns=userAnswer.objects.get(id=id)
@@ -86,12 +103,13 @@ def result(request,id):
       dict_obj = ast.literal_eval(data)
       index=0
       for i in dict_obj:
+            quest=questions.objects.get(id=i['qid'])
             index+=1
             a=i['userAns'].lower()
-            b=i['ans'].lower()
+            b=quest.correctOpt.lower()
             if a==b :
                   cans+=1
-            quest=questions.objects.get(id=i['qid'])
+            
             userData.append({'index':index,'question':quest.question,'A':quest.optA,'B':quest.optB,'C':quest.optC,'D':quest.optD,'ans':b,'userAns':a})
             
       
@@ -112,12 +130,26 @@ def signup_user(request):
              return redirect('/home')      
 def logout(request):
       del request.session['user']
+      del request.session['user_type'] 
       return redirect('/') 
 
 def admin_dashboard(request):
       userAns=userAnswer.objects.all()
-      dts={'data':userAns}
-      return render(request,'admin_dashboard.html',dts)    
+      userData=[]
+      for data in userAns:
+            
+            marks= ast.literal_eval(data.userAns)
+            m=0
+            for i in marks:
+                  quest=questions.objects.get(id=i['qid'])
+                  a=i['userAns'].lower()
+                  b=quest.correctOpt.lower()
+                  if(a==b):
+                        m=m+1
+            userData.append({'name':data.user.username,'course':data.courseId.courseName,'Exam':data.quizId.quizname,'Qno':data.quizId.no_of_quest,'score':m})
+      print(userData)
+      dts={'data':userData}
+      return render(request,'admin_dashboard.html',dts)   
 
       
    
